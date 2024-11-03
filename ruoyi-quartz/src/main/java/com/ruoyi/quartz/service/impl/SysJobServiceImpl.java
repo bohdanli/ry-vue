@@ -35,13 +35,17 @@ public class SysJobServiceImpl implements ISysJobService
      * 项目启动时，初始化定时器 主要是防止手动修改数据库导致未同步到定时任务处理（注：不能手动修改数据库ID和任务组名，否则会导致脏数据）
      */
     @PostConstruct
-    public void init() throws SchedulerException, TaskException
-    {
-        scheduler.clear();
-        List<SysJob> jobList = jobMapper.selectJobAll();
-        for (SysJob job : jobList)
-        {
-            ScheduleUtils.createScheduleJob(scheduler, job);
+    public void init() {
+        try {
+            scheduler.clear();
+            List<SysJob> jobList = jobMapper.selectJobAll();
+            for (SysJob job : jobList) {
+                ScheduleUtils.createScheduleJob(scheduler, job);
+            }
+        } catch (SchedulerException | TaskException e) {
+            // 捕获并处理 SchedulerException 和 TaskException，防止它们抛出
+            e.printStackTrace();  // 可以换成使用日志记录异常，比如 log.error()
+            throw new RuntimeException("初始化定时器时发生错误: " + e.getMessage(), e);  // 将异常转换为非受检异常
         }
     }
 

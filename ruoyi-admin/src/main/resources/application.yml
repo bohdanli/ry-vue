@@ -16,7 +16,7 @@ ruoyi:
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080
-  port: 8080
+  port: 8082
   servlet:
     # 应用的访问路径
     context-path: /
@@ -87,6 +87,21 @@ spring:
         max-active: 8
         # #连接池最大阻塞等待时间（使用负值表示没有限制）
         max-wait: -1ms
+  cache:
+    type: hazelcast
+
+hazelcast:
+  network:
+    join:
+      multicast:
+        enabled: false # Disable broadcast discovery
+      tcp-ip:
+        enabled: true # Enable TCP/IP discovery mode
+        members: # The IP address and port of the cluster member, ensuring that the two can find each other.
+          - localhost:8082
+          - localhost:8083
+    cluster-name: hazelcast-cluster
+    port: 5701 # Hazelcast节点端口
 
 # token配置
 token:
